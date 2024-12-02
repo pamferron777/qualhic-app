@@ -1,0 +1,41 @@
+version: '3.1'
+
+services:
+  db:
+    image: mariadb:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      - code-network
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8001:8080
+    networks:
+      - code-network
+    
+  api:
+    build:
+      context: ../build
+    restart: always
+    ports:
+      - 8080:80
+    volumes:
+      - ./../api/controllers:/var/www/html/controllers
+      - ./../api/helpers:/var/www/html/helpers
+      - ./../api/models:/var/www/html/models
+      - ./../api/public:/var/www/html/public
+      - ./../api/services:/var/www/html/services
+      - ./../api/src:/var/www/html/src
+      - ./../api/composer.json:/var/www/html/composer.json
+    networks:
+      - code-network
+    
+networks:
+    code-network:
+      driver: bridge
+
+  
